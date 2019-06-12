@@ -1,0 +1,22 @@
+<?php
+    declare(strict_types=1);
+    
+    namespace NAMESPACE;
+    
+    use Illuminate\Support\Facades\DB;
+    use IMPORT_ENTITY;
+    use Jsocha\Entities\BaseRepository;
+    use Jsocha\Entities\Interfaces\RepositoryInterface;
+
+    final class REPOSITORY_CLASS_NAME extends BaseRepository implements RepositoryInterface
+    {
+        /**
+         * REPOSITORY_CLASS_NAME constructor.
+         */
+        final public function __construct()
+        {
+            $this->entity = ENTITY_CLASS_NAME::class;
+            
+            $this->table = 'TABLE_NAME';
+        }
+    }

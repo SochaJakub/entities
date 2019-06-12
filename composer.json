@@ -1,0 +1,25 @@
+{
+  "name": "sochajakub/entities",
+  "description": "Simple implementation of Entity/Repository pattern for Laravel",
+  "license": "MIT",
+  "type": "library",
+  "homepage": "http://quatrodesign.pl",
+  "minimum-stability": "dev",
+  "version": "1.0",
+  "authors": [
+    {
+      "name": "Jakub Socha",
+      "email": "jsocha@quatrodesign.pl"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Jsocha\\Entities\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.2",
+    "laravel/framework": "5.6.*"
+  }
+}
+

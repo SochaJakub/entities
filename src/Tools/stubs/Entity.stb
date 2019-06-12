@@ -1,0 +1,50 @@
+<?php
+    declare(strict_types=1);
+    
+    namespace NAMESPACE;
+    
+    use Jsocha\Entities\BaseEntity;
+    use IMPORT_REPOSITORY;
+    use Jsocha\Entities\Interfaces\EntityInterface;
+    @@IMPORT_CARBON@@
+
+    final class ENTITY_NAME extends BaseEntity implements EntityInterface
+    {
+        /**
+         * Tablica relacji
+         *
+         * @var array
+         */
+        public $relations = [];
+        /**
+         * @var int
+         */
+        protected $id;
+        @@PROPERTIES@@
+
+        /**
+         * @return REPOSITORY_CLASS_NAME
+         */
+        final public function getRepository(): REPOSITORY_CLASS_NAME
+        {
+            return new REPOSITORY_CLASS_NAME;
+        }
+
+        /**
+         * @return int
+         */
+        public function getId(): int
+        {
+            return $this->id;
+        }
+
+        /**
+         * @param int $id
+         */
+
+         public function setId(int $id): void
+         {
+             $this->id = $id;
+         }
+        
+    }
