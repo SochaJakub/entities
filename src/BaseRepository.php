@@ -331,7 +331,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * @return string
      */
-    public function getWriteConnection()
+    public function getWriteConnection(): string
     {
         return $this->writeConnection;
     }
@@ -339,7 +339,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * @return string
      */
-    public function getReadConnection()
+    public function getReadConnection(): string
     {
         return $this->readConnection;
     }
@@ -347,9 +347,10 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * @return mixed
      */
-    public function getEntity()
+    public function getEntity(): string
     {
         return $this->entity;
     }
+    
     
 }
