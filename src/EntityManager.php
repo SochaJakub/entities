@@ -12,6 +12,7 @@
 
 namespace Jsocha\Entities;
 
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Jsocha\Entities\Interfaces\EntityInterface;
 
@@ -31,7 +32,7 @@ final class EntityManager
      *
      * @return EntityInterface|bool
      */
-    final public function add(EntityInterface $entity, bool $instantFetch = false)
+    final public function add(EntityInterface $entity, bool $instantFetch = true): EntityInterface
     {
         $repository = $entity->getRepository();
         
@@ -46,12 +47,13 @@ final class EntityManager
                 
             }
             else {
-                return DB::connection($repository->getWriteConnection())->table($repository->getTable())->insert($this->prepareDataForCreate($entity));
+                DB::connection($repository->getWriteConnection())->table($repository->getTable())->insert($this->prepareDataForCreate($entity));
+                
+                return $entity;
             }
             
         } catch (\Exception $exception) {
-            http_response_code(500);
-            die($exception->getMessage());
+            throw new Exception('Can`t create entity', 500);
         }
     }
     
