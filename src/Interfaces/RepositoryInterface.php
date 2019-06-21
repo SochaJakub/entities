@@ -32,10 +32,10 @@ interface RepositoryInterface
     
     function getTable(): string;
     
+    function getEntity(): string;
+    
     function getWriteConnection(): string;
     
     function getReadConnection(): string;
-    
-    function getEntity(): string;
     
 }

@@ -3,7 +3,7 @@
  * Copyright (c) 2019 by Jakub Socha <jsocha@quatrodesign.pl>
  ******************************************************************************/
 
-namespace Jsocha\Entites\Tools;
+namespace Jsocha\Entities\Tools;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
