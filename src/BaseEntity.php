@@ -112,7 +112,7 @@ abstract class BaseEntity
         foreach ($clone->getProperties() as $property) {
             
             //Biore pod uwage tylko glowne pola encji - żadnych relacji
-            if (! in_array($property->name, $this->getRelations())) {
+            if (! in_array($property->name, array_keys($this->getRelations()))) {
                 
                 $key = Utils::toUnderScore($property->name);
                 
