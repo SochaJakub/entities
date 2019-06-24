@@ -65,7 +65,7 @@ class MakeEntity extends Command
             $this->error('Entities ' . $entityName . ' already exists on ' . $path . '');
         }
         else {
-            $file = file_get_contents(base_path('vendor/jsocha/entities/src/Tools/stubs/Entity.stb'));
+            $file = file_get_contents(base_path('vendor/sochajakub/entities/src/Tools/stubs/Entity.stb'));
             
             $properties = '';
             $needCarbon = false;
@@ -127,7 +127,7 @@ class MakeEntity extends Command
              */
             $repositoryPath = app_path('Repositories/' . $directoryPath . $entityName . 'Repository.php');
             
-            $file = file_get_contents(base_path('vendor/jsocha/entities/src/Tools/stubs/Repository.stb'));
+            $file = file_get_contents(base_path('vendor/sochajakub/entities/src/Tools/stubs/Repository.stb'));
             
             $namespace = 'App\\Repositories\\' . $directory;
             $replace = [
