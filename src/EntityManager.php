@@ -37,20 +37,20 @@ final class EntityManager
         $repository = $entity->getRepository();
         
         try {
+            $query = DB::connection($repository->getWriteConnection())->table($repository->getTable());
+            $entityData = $this->prepareDataForCreate($entity);
+            
             if ($instantFetch) {
-                $id = DB::connection($repository->getWriteConnection())->table($repository->getTable())->insertGetId($this->prepareDataForCreate($entity));
+                $id = $query->insertGetId($entityData);
                 
                 $entity->setId($id);
                 $entity->setOriginalData($entity->toArray());
-                
-                return $entity;
-                
             }
             else {
-                DB::connection($repository->getWriteConnection())->table($repository->getTable())->insert($this->prepareDataForCreate($entity));
-                
-                return $entity;
+                $query->insert($entityData);
             }
+            
+            return $entity;
             
         } catch (\Exception $exception) {
             throw new Exception('Can`t create entity', 500);
