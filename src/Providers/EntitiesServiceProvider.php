@@ -12,6 +12,7 @@
 
 namespace Jsocha\Entities\Providers;
 
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 
 final class EntitiesServiceProvider extends ServiceProvider
@@ -23,11 +24,17 @@ final class EntitiesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        foreach ($this->app->make('files')->allFiles(app_path('Repositories')) as $file) {
-            
+        /** @var Filesystem $filesystem */
+        $filesystem = $this->app->make('files');
+        
+        $path = $filesystem->exists(app_path('Repository')) ? app_path('Repository') : app_path('Repositories');
+        
+        $namespace = $filesystem->exists(app_path('Repository')) ? 'Repository' : 'Repositories';
+        
+        foreach ($filesystem->allFiles($path) as $file) {
             $realPath = str_replace('/', '\\', $file->getRelativePathname());
             
-            $className = 'App\\Repositories\\' . str_replace('.php', '', $realPath);
+            $className = 'App\\' . $namespace . '\\' . str_replace('.php', '', $realPath);
             
             $repository = new $className;
             
