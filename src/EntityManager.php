@@ -30,7 +30,7 @@ final class EntityManager
      * @param EntityInterface $entity
      * @param bool            $instantFetch
      *
-     * @return EntityInterface|bool
+     * @return EntityInterface
      */
     final public function add(EntityInterface $entity, bool $instantFetch = true): EntityInterface
     {
@@ -53,7 +53,8 @@ final class EntityManager
             return $entity;
             
         } catch (\Exception $exception) {
-            throw new Exception('Can`t create entity', 500);
+            http_response_code(500);
+            die('Can`t create entity');
         }
     }
     
