@@ -27,7 +27,7 @@
          */
         final public function getRepository(): REPOSITORY_CLASS_NAME
         {
-            return new REPOSITORY_CLASS_NAME;
+            return resolve(REPOSITORY_CLASS_NAME::class);
         }
 
         /**
