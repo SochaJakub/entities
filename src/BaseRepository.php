@@ -8,6 +8,7 @@ namespace Jsocha\Entities;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Jsocha\Entities\Interfaces\RepositoryInterface;
 
 /**
@@ -316,6 +317,27 @@ abstract class BaseRepository implements RepositoryInterface
         }
         
         return $result;
+    }
+    
+    /**
+     * Ustawianie encji wg określonego klucza
+     *
+     * @param array  $entities
+     * @param string $key
+     *
+     * @return array
+     */
+    public function keyBy(array $entities, string $key)
+    {
+        $getterName = 'get' . Str::studly($key);
+        
+        $tmp = [];
+        
+        foreach ($entities as $entity) {
+            $tmp[$entity->$getterName()] = $entity;
+        }
+        
+        return $tmp;
     }
     
     /**
