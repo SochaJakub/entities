@@ -69,7 +69,12 @@ final class RelationsManager
          */
         $values = $this->extractForeignKeysValues($this->result, $this->relationData['local_key']);
         
-        return $relatedEntityRepository->findBy([$this->relationData['entity_key'] => ['IN', $values]]);
+        /**
+         * Wg czego EWENTUALNIE posortować encje
+         */
+        $sortInstruction = isset($this->relationData['sort']) ? $this->relationData['sort'] : [];
+        
+        return $relatedEntityRepository->findBy([$this->relationData['entity_key'] => ['IN', $values]], $sortInstruction);
     }
     
     /**
