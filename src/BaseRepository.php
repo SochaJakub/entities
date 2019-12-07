@@ -228,11 +228,13 @@ abstract class BaseRepository implements RepositoryInterface
     {
         $countQuery = clone $builder;
         
+        $totalRecords = preg_match('/left/', strtolower($countQuery->toSql())) ? $countQuery->get()->count() : $countQuery->count();
+        
         $builder->take($perPage)->skip(($perPage * $currentPage) - $perPage);
         
         $portion = $this->mapToEntity($this->mergeRelations($builder, $relations));
         
-        return new LengthAwarePaginator($portion, $countQuery->get()->count(), $perPage, $currentPage, []);
+        return new LengthAwarePaginator($portion, $totalRecords, $perPage, $currentPage, []);
     }
     
     /**
