@@ -5,11 +5,14 @@
 
 namespace Jsocha\Entities;
 
+use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Jsocha\Entities\Interfaces\RepositoryInterface;
+use Symfony\Component\Debug\Exception\FatalErrorException;
+use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 /**
  * Class BaseRepository
@@ -57,7 +60,7 @@ abstract class BaseRepository implements RepositoryInterface
     {
         $query = DB::connection($this->getReadConnection())->table($this->getTable());
         
-        $result = (array) $query->find($id);
+        $result = (array)$query->find($id);
         
         if ($result) {
             return new $this->entity($result);
@@ -83,7 +86,7 @@ abstract class BaseRepository implements RepositoryInterface
             $query->orderBy($field, $direction);
         }
         
-        $result = (array) $query->first();
+        $result = (array)$query->first();
         
         if ($result) {
             return new $this->entity ($result);
@@ -151,6 +154,7 @@ abstract class BaseRepository implements RepositoryInterface
      * @param array $sorting
      * @param int   $currentPage
      * @param int   $perPage
+     * @param array $relations
      * @param array $options
      *
      * @return LengthAwarePaginator
@@ -161,8 +165,7 @@ abstract class BaseRepository implements RepositoryInterface
         
         if ($perPage > 0) {
             $totalOffers = $this->countForPagination($filters);
-        }
-        else {
+        } else {
             $totalOffers = count($getPortion);
         }
         
@@ -190,8 +193,10 @@ abstract class BaseRepository implements RepositoryInterface
      * @param array $sorting
      * @param int   $page
      * @param int   $perPage
+     * @param array $relations
      *
      * @return array
+     * @throws Exception
      */
     public function takePortion(array $filters, array $sorting, int $page = 1, int $perPage = 30, array $relations = []): array
     {
@@ -210,32 +215,53 @@ abstract class BaseRepository implements RepositoryInterface
     
     
     /**
+     * Paginacja dla zaawansowanego wyszukiwania
+     *
+     * @param Builder $builder
+     * @param int     $currentPage
+     * @param int     $perPage
+     * @param array   $relations
+     *
+     * @return LengthAwarePaginator
+     */
+    protected function paginatedQuery(Builder $builder, int $currentPage = 1, int $perPage = 30, array $relations = [])
+    {
+        $countQuery = clone $builder;
+        
+        $builder->take($perPage)->skip(($perPage * $currentPage) - $perPage);
+        
+        $portion = $this->mapToEntity($this->mergeRelations($builder, $relations));
+        
+        return new LengthAwarePaginator($portion, $countQuery->get()->count(), $perPage, $currentPage, []);
+    }
+    
+    /**
      * Aplikacja filtrów na wyniki
      *
      * @param Builder $query
      * @param array   $filters
      *
      * @return Builder
+     * @throws Exception
      */
     protected function applyFilters(Builder $query, $filters): Builder
     {
         foreach ($filters as $field => $filter) {
             
             if (is_array($filter)) {
+                if (! isset($filter[0])) {
+                    throw new Exception(json_encode($filter), 500);
+                }
                 if ($filter[0] === 'IN') {
                     $query->whereIn($field, $filter[1]);
-                }
-                elseif ($filter[0] === 'BETWEEN') {
+                } elseif ($filter[0] === 'BETWEEN') {
                     $query->whereBetween($field, $filter[1]);
-                }
-                elseif ($filter[0] === 'RAW') {
+                } elseif ($filter[0] === 'RAW') {
                     $query->whereRaw($filter[1]);
-                }
-                else {
+                } else {
                     $query->where($field, $filter[0], $filter[1]);
                 }
-            }
-            else {
+            } else {
                 $query->where($field, $filter);
             }
             
@@ -254,7 +280,7 @@ abstract class BaseRepository implements RepositoryInterface
     protected function mapToEntity(array $query): array
     {
         return $result = array_map(function ($item) {
-            return new $this->entity ((array) $item);
+            return new $this->entity ((array)$item);
         }, $query);
     }
     
@@ -308,7 +334,7 @@ abstract class BaseRepository implements RepositoryInterface
                 $relationLocalKey = $relation['local_key'];
                 
                 foreach ($result as $i => $row) {
-                    $entity = (array) $row;
+                    $entity = (array)$row;
                     
                     $result[$i]->$relationKey = isset($data[$entity[$relationLocalKey]]) ? $data[$entity[$relationLocalKey]] : ($relation['type'] === 'hasMany' ? [] : null);
                 }
