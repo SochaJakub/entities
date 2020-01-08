@@ -52,11 +52,10 @@ final class EntityManager
             return $entity;
             
         } catch (\Exception $exception) {
-            http_response_code(500);
             if (env('APP_ENV') === 'production') {
-                die('Can`t create entity');
+                throw new Exception('Can`t create entity', 500);
             } else {
-                die('Can`t create entity: ' . $exception->getMessage());
+                throw new Exception('Can`t create entity: ' . $exception->getMessage(), 500);
             }
             
         }
