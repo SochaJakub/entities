@@ -45,8 +45,7 @@ final class EntityManager
                 
                 $entity->setId($id);
                 $entity->setOriginalData($entity->toArray());
-            }
-            else {
+            } else {
                 $query->insert($entityData);
             }
             
@@ -54,7 +53,12 @@ final class EntityManager
             
         } catch (\Exception $exception) {
             http_response_code(500);
-            die('Can`t create entity');
+            if (env('APP_ENV') === 'production') {
+                die('Can`t create entity');
+            } else {
+                die('Can`t create entity: ' . $exception->getMessage());
+            }
+            
         }
     }
     
@@ -154,9 +158,8 @@ final class EntityManager
                 //Metoda istnieje i nie jest pobierane ID/Repozytorium
                 if (method_exists($resource, $methodName) && ! in_array($methodName, ['getId', 'getRepository'])) {
                     $dataToReturn[Utils::toUnderScore($property->name)] = $resource->$methodName();
-                }
-                else if (method_exists($this, $methodNameIs)) {
-                    $dataToReturn[Utils::toUnderScore($property->name)] = (int) $resource->$methodNameIs();
+                } elseif (method_exists($this, $methodNameIs)) {
+                    $dataToReturn[Utils::toUnderScore($property->name)] = (int)$resource->$methodNameIs();
                 }
             }
         }
@@ -198,8 +201,8 @@ final class EntityManager
                  * Wlaściwości "boolowskie" z rzutowaniem na "INT"
                  */
                 if (method_exists($entity, $methodNameIs)) {
-                    if ($oldValue != (int) $entity->$methodNameIs()) {
-                        $dataToReturn[Utils::toUnderScore($key)] = (int) $entity->$methodNameIs();
+                    if ($oldValue != (int)$entity->$methodNameIs()) {
+                        $dataToReturn[Utils::toUnderScore($key)] = (int)$entity->$methodNameIs();
                     }
                 }
             }
