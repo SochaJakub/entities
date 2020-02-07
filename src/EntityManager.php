@@ -15,6 +15,7 @@ namespace Jsocha\Entities;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Jsocha\Entities\Interfaces\EntityInterface;
+use Jsocha\Entities\Interfaces\RepositoryInterface;
 
 /**
  * Class EntityManager
@@ -27,8 +28,8 @@ final class EntityManager
     /**
      * Dodawanie encji do bazy danych
      *
-     * @param EntityInterface $entity
-     * @param bool            $instantFetch
+     * @param  EntityInterface  $entity
+     * @param  bool  $instantFetch
      *
      * @return EntityInterface
      */
@@ -65,7 +66,7 @@ final class EntityManager
     /**
      * Zapisywanie encji w bazie danych
      *
-     * @param EntityInterface $entity
+     * @param  EntityInterface  $entity
      *
      * @return bool
      */
@@ -85,9 +86,9 @@ final class EntityManager
     /**
      * Zapisuje encje w bazie
      *
-     * @param EntityInterface $entity
+     * @param  EntityInterface  $entity
      *
-     * @param array           $data
+     * @param  array  $data
      *
      * @return EntityInterface|bool
      */
@@ -118,7 +119,7 @@ final class EntityManager
     /**
      * Pernamentne usuwanie encji
      *
-     * @param EntityInterface $entity
+     * @param  EntityInterface  $entity
      *
      * @return bool
      */
@@ -130,9 +131,34 @@ final class EntityManager
     }
     
     /**
+     * Masowe usuwanie encji (wg ID)
+     *
+     * @param  array  $entities
+     *
+     * @return bool
+     */
+    final public function massDelete(array $entities): bool
+    {
+        if (count($entities) > 0) {
+            /** @var RepositoryInterface $repository */
+            $repository = $entities[0]->getRepository();
+            
+            $ids = [];
+            /** @var EntityInterface $entity */
+            foreach ($entities as $entity) {
+                $ids = $entity->getId();
+            }
+            
+            return DB::connection($repository->getWriteConnection())->table($repository->getTable())->whereIn('id', $ids)->delete() > 0;
+        }
+        
+        return true;
+    }
+    
+    /**
      * Przygotowuje dane do stworzenia nowego rekordu w bazie
      *
-     * @param EntityInterface $resource
+     * @param  EntityInterface  $resource
      *
      * @return array
      * @throws \ReflectionException
@@ -158,7 +184,7 @@ final class EntityManager
                 if (method_exists($resource, $methodName) && ! in_array($methodName, ['getId', 'getRepository'])) {
                     $dataToReturn[Utils::toUnderScore($property->name)] = $resource->$methodName();
                 } elseif (method_exists($this, $methodNameIs)) {
-                    $dataToReturn[Utils::toUnderScore($property->name)] = (int)$resource->$methodNameIs();
+                    $dataToReturn[Utils::toUnderScore($property->name)] = (int) $resource->$methodNameIs();
                 }
             }
         }
@@ -174,7 +200,7 @@ final class EntityManager
     /**
      * Przygotowuje dane do zapisu (przetworzenie Entity na pola SQL)
      *
-     * @param EntityInterface $entity
+     * @param  EntityInterface  $entity
      *
      * @return array
      */
@@ -200,8 +226,8 @@ final class EntityManager
                  * Wlaściwości "boolowskie" z rzutowaniem na "INT"
                  */
                 if (method_exists($entity, $methodNameIs)) {
-                    if ($oldValue != (int)$entity->$methodNameIs()) {
-                        $dataToReturn[Utils::toUnderScore($key)] = (int)$entity->$methodNameIs();
+                    if ($oldValue != (int) $entity->$methodNameIs()) {
+                        $dataToReturn[Utils::toUnderScore($key)] = (int) $entity->$methodNameIs();
                     }
                 }
             }
