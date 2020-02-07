@@ -146,7 +146,7 @@ final class EntityManager
             $ids = [];
             /** @var EntityInterface $entity */
             foreach ($entities as $entity) {
-                $ids = $entity->getId();
+                $ids[] = $entity->getId();
             }
             
             return DB::connection($repository->getWriteConnection())->table($repository->getTable())->whereIn('id', $ids)->delete() > 0;
@@ -172,7 +172,7 @@ final class EntityManager
             $ids = [];
             /** @var EntityInterface $entity */
             foreach ($entities as $entity) {
-                $ids = $entity->getId();
+                $ids[] = $entity->getId();
             }
             
             return DB::connection($repository->getWriteConnection())->table($repository->getTable())->whereIn('id', $ids)->update($update);
