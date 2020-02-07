@@ -256,6 +256,8 @@ abstract class BaseRepository implements RepositoryInterface
                 }
                 if ($filter[0] === 'IN') {
                     $query->whereIn($field, $filter[1]);
+                } elseif ($filter[0] === 'NOT IN') {
+                    $query->whereNotIn($field, $filter[1]);
                 } elseif ($filter[0] === 'BETWEEN') {
                     $query->whereBetween($field, $filter[1]);
                 } elseif ($filter[0] === 'RAW') {
