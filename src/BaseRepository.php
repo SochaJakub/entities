@@ -52,7 +52,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Zwraca encję po ID
      *
-     * @param int $id
+     * @param  int  $id
      *
      * @return mixed
      */
@@ -60,7 +60,7 @@ abstract class BaseRepository implements RepositoryInterface
     {
         $query = DB::connection($this->getReadConnection())->table($this->getTable());
         
-        $result = (array)$query->find($id);
+        $result = (array) $query->find($id);
         
         if ($result) {
             return new $this->entity($result);
@@ -73,8 +73,8 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Zwraca 1 encję wg warunków
      *
-     * @param array $conditions
-     * @param array $sorting
+     * @param  array  $conditions
+     * @param  array  $sorting
      *
      * @return mixed
      */
@@ -86,7 +86,7 @@ abstract class BaseRepository implements RepositoryInterface
             $query->orderBy($field, $direction);
         }
         
-        $result = (array)$query->first();
+        $result = (array) $query->first();
         
         if ($result) {
             return new $this->entity ($result);
@@ -98,10 +98,10 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Zwraca kolekcję encję wg warunków
      *
-     * @param array $conditions
-     * @param array $sorting
-     * @param int   $limit
-     * @param array $relations
+     * @param  array  $conditions
+     * @param  array  $sorting
+     * @param  int  $limit
+     * @param  array  $relations
      *
      * @return array
      */
@@ -135,7 +135,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Zlicza ile jest rekordów spełniających wymagania
      *
-     * @param array $conditions
+     * @param  array  $conditions
      *
      * @return int
      */
@@ -150,12 +150,12 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Podstawowa paginacja
      *
-     * @param array $filters
-     * @param array $sorting
-     * @param int   $currentPage
-     * @param int   $perPage
-     * @param array $relations
-     * @param array $options
+     * @param  array  $filters
+     * @param  array  $sorting
+     * @param  int  $currentPage
+     * @param  int  $perPage
+     * @param  array  $relations
+     * @param  array  $options
      *
      * @return LengthAwarePaginator
      */
@@ -175,7 +175,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Zliczenie rekordów spełniających kryteria
      *
-     * @param array $filters
+     * @param  array  $filters
      *
      * @return integer
      */
@@ -189,11 +189,11 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Rekordy z podanego przedziału stronicowego spełniające kryteria
      *
-     * @param array $filters
-     * @param array $sorting
-     * @param int   $page
-     * @param int   $perPage
-     * @param array $relations
+     * @param  array  $filters
+     * @param  array  $sorting
+     * @param  int  $page
+     * @param  int  $perPage
+     * @param  array  $relations
      *
      * @return array
      * @throws Exception
@@ -217,10 +217,10 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Paginacja dla zaawansowanego wyszukiwania
      *
-     * @param Builder $builder
-     * @param int     $currentPage
-     * @param int     $perPage
-     * @param array   $relations
+     * @param  Builder  $builder
+     * @param  int  $currentPage
+     * @param  int  $perPage
+     * @param  array  $relations
      *
      * @return LengthAwarePaginator
      */
@@ -240,13 +240,13 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Aplikacja filtrów na wyniki
      *
-     * @param Builder $query
-     * @param array   $filters
+     * @param  Builder  $query
+     * @param  array  $filters
      *
      * @return Builder
      * @throws Exception
      */
-    protected function applyFilters(Builder $query, $filters): Builder
+    public static function applyFilters(Builder $query, $filters): Builder
     {
         foreach ($filters as $field => $filter) {
             
@@ -275,22 +275,22 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Mapuje wyniki zapytania na pojedyncze encje w tablicy
      *
-     * @param array $query
+     * @param  array  $query
      *
      * @return array
      */
     protected function mapToEntity(array $query): array
     {
         return $result = array_map(function ($item) {
-            return new $this->entity ((array)$item);
+            return new $this->entity ((array) $item);
         }, $query);
     }
     
     /**
      * Dołączenie relacji(jeśli istnieją)
      *
-     * @param Builder $query
-     * @param array   $relations
+     * @param  Builder  $query
+     * @param  array  $relations
      *
      * @return array
      */
@@ -336,7 +336,7 @@ abstract class BaseRepository implements RepositoryInterface
                 $relationLocalKey = $relation['local_key'];
                 
                 foreach ($result as $i => $row) {
-                    $entity = (array)$row;
+                    $entity = (array) $row;
                     
                     $result[$i]->$relationKey = isset($data[$entity[$relationLocalKey]]) ? $data[$entity[$relationLocalKey]] : ($relation['type'] === 'hasMany' ? [] : null);
                 }
@@ -350,8 +350,8 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Ustawianie encji wg określonego klucza
      *
-     * @param array  $entities
-     * @param string $key
+     * @param  array  $entities
+     * @param  string  $key
      *
      * @return array
      */
