@@ -156,17 +156,17 @@ final class EntityManager
     }
     
     /**
-     * Masowe edytowanie encji (wg ID)
-     *
-     * @param  RepositoryInterface  $repository
+     * @param  string  $repositoryClass
      * @param  array  $conditions
      * @param  array  $newData
      *
-     * @return bool
+     * @return int
      * @throws Exception
      */
-    final public function massUpdate(RepositoryInterface $repository, array $conditions, array $newData)
+    final public function massUpdate(string $repositoryClass, array $conditions, array $newData)
     {
+        $repository = resolve($repositoryClass);
+        
         $query = BaseRepository::applyFilters(DB::connection($repository->getWriteConnection())->table($repository->getTable()), $conditions);
         
         return $query->update($newData);
