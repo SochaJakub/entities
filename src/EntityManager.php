@@ -156,6 +156,32 @@ final class EntityManager
     }
     
     /**
+     * Masowe edytowanie encji (wg ID)
+     *
+     * @param  array  $entities
+     * @param  array  $update
+     *
+     * @return bool
+     */
+    final public function massUpdate(array $entities, array $update): bool
+    {
+        if (count($entities) > 0) {
+            /** @var RepositoryInterface $repository */
+            $repository = $entities[0]->getRepository();
+            
+            $ids = [];
+            /** @var EntityInterface $entity */
+            foreach ($entities as $entity) {
+                $ids = $entity->getId();
+            }
+            
+            return DB::connection($repository->getWriteConnection())->table($repository->getTable())->whereIn('id', $ids)->update($update);
+        }
+        
+        return true;
+    }
+    
+    /**
      * Przygotowuje dane do stworzenia nowego rekordu w bazie
      *
      * @param  EntityInterface  $resource
