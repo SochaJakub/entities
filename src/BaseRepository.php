@@ -11,8 +11,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Jsocha\Entities\Interfaces\RepositoryInterface;
-use Symfony\Component\Debug\Exception\FatalErrorException;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 /**
  * Class BaseRepository
@@ -221,10 +219,11 @@ abstract class BaseRepository implements RepositoryInterface
      * @param  int  $currentPage
      * @param  int  $perPage
      * @param  array  $relations
+     * @param  array  $options
      *
      * @return LengthAwarePaginator
      */
-    protected function paginatedQuery(Builder $builder, int $currentPage = 1, int $perPage = 30, array $relations = [])
+    public function paginatedQuery(Builder $builder, int $currentPage = 1, int $perPage = 30, array $relations = [], array $options = []): LengthAwarePaginator
     {
         $countQuery = clone $builder;
         
@@ -234,7 +233,7 @@ abstract class BaseRepository implements RepositoryInterface
         
         $portion = $this->mapToEntity($this->mergeRelations($builder, $relations));
         
-        return new LengthAwarePaginator($portion, $totalRecords, $perPage, $currentPage, []);
+        return new LengthAwarePaginator($portion, $totalRecords, $perPage, $currentPage, $options);
     }
     
     /**

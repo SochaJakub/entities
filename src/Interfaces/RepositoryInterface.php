@@ -5,6 +5,7 @@
 
 namespace Jsocha\Entities\Interfaces;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -29,6 +30,8 @@ interface RepositoryInterface
     function countForPagination(array $filters): int;
     
     function takePortion(array $filters, array $sorting, int $page = 1, int $perPage = 30): array;
+    
+    function paginatedQuery(Builder $builder, int $currentPage = 1, int $perPage = 30, array $relations = [], array $options = []): LengthAwarePaginator;
     
     function getTable(): string;
     
